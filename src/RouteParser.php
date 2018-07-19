@@ -10,23 +10,15 @@ class RouteParser
     const ROUTE_PATTERN = '~(?<route>(?:/[a-zA-Z0-9-]+)+)~is';
     const OPTIONAL_OPEN_PARAMS_PATTERN = '(?<optional>(?:\\[|\\[/)*)';
     const OPEN_PARAMS_PATTERN = '(?:\\{){1}';
-    const TYPE_PARAMS_PATTERN = '(?<type>(?:[a-z][a-z]+))';
     const NAME_PARAMS_PATTERN = '(?<name>(?:[a-z][a-z]+))';
     const CLOSE_PARAMS_PATTERN = '(?:\\}){1}';
     const OPTIONAL_CLOSE_PARAMS_PATTERN = '(?:\\])*';
+    const DATA_TYPE_PATTERN = '(\w)';
 
     /**
      * @var string
      */
     protected $paramsPattern;
-
-    /**
-     * @var string[]
-     */
-    protected $dataTypes = [
-        'int' => '(\d)',
-        'string' => '(\w)',
-    ];
 
     /**
      * Constructs RouteParser object
@@ -35,7 +27,6 @@ class RouteParser
     {
         $this->paramsPattern = '~' . self::OPTIONAL_OPEN_PARAMS_PATTERN;
         $this->paramsPattern .= self::OPEN_PARAMS_PATTERN;
-        $this->paramsPattern .= self::TYPE_PARAMS_PATTERN . ':';
         $this->paramsPattern .= self::NAME_PARAMS_PATTERN;
         $this->paramsPattern .= self::CLOSE_PARAMS_PATTERN;
         $this->paramsPattern .= self::OPTIONAL_CLOSE_PARAMS_PATTERN . '~is';
@@ -95,17 +86,15 @@ class RouteParser
         if ($regexMatch !== false) {
             foreach ($matchesParams as $key => $arrMatches) {
                 $pattern = $arrMatches[0];
-                $type = $arrMatches['type'];
                 $optional = !empty($arrMatches['optional']);
 
                 $parseRouteResult['params'][$key] = [
                     'pattern' => $pattern,
-                    'type' => $type,
                     'name' => $arrMatches['name'],
                     'optional' => $optional,
                 ];
 
-                $replacement = isset($this->dataTypes[$type]) ? $this->dataTypes[$type] : $this->dataTypes['string'];
+                $replacement = self::DATA_TYPE_PATTERN;
 
                 if ($optional) {
                     $replacement = "((/)*$replacement){0,1}";
