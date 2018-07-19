@@ -1,0 +1,27 @@
+{
+    "name": "ken/router",
+    "description": "Simple Router for Ken Framework",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Muhammad Safri Juliardi",
+            "email": "ardi93@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "codeception/codeception": "^2.3",
+        "codeception/specify": "^0.4.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ken\\Router\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "tests\\": "tests/"
+        }
+    }
+}
