@@ -77,7 +77,7 @@ class Route implements RouteInterface
             if (isset($config[$key])) {
                 call_user_func([$this, $methodName], $config[$key]);
             } else {
-                throw new InvalidConfigurationException("Configuration '{$configKey}' is required.");
+                throw new InvalidConfigurationException("Configuration '{$key}' is required.");
             }
         }
 
@@ -168,6 +168,11 @@ class Route implements RouteInterface
     public function setHandler($handler)
     {
         $this->handler = $handler;
+    }
+
+    public function getHandler()
+    {
+        return $this->handler;
     }
 
     /**

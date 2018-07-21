@@ -1,6 +1,8 @@
 <?php
 namespace Test;
 
+use Ken\Router\RouteParser;
+
 class RouteTest extends \Codeception\Test\Unit
 {
     use \Codeception\Specify;
@@ -15,9 +17,20 @@ class RouteTest extends \Codeception\Test\Unit
      */
     protected $routeObject;
 
+    /**
+     * @var \Ken\Router\RouteParser
+     */
+    protected $routeParser;
+
     protected function _before()
     {
-        $this->routeObject = new \Ken\Router\Route();
+        $this->routeParser = new RouteParser();
+
+        $routeConfig = $this->routeParser->parse('/users/{name}');
+        $routeConfig['handler'] = 'Class::method';
+        $routeConfig['method'] = 'GET';
+
+        $this->routeObject = new \Ken\Router\Route($routeConfig);
     }
 
     protected function _after()
@@ -50,7 +63,7 @@ class RouteTest extends \Codeception\Test\Unit
     public function testSetMethodException()
     {
         $this->expectException(\Ken\Router\Exception\InvalidConfigurationException::class);
-        $this->expectExceptionMessage("Method 'asdf' not allowed");
+        $this->expectExceptionMessage("Method 'asdf' is not allowed");
 
         $this->routeObject->setMethod("asdf");
     }
@@ -61,51 +74,35 @@ class RouteTest extends \Codeception\Test\Unit
         $this->assertEquals($this->routeObject->getPath(), "/home");
     }
 
-    public function testIsRouteMatch()
-    {
-        $this->routeObject->setMethod('GET');
-        $this->routeObject->setPath('/home');
-
-        $this->assertTrue($this->routeObject->isMatch('/home', 'GET'));
-
-        $this->assertFalse($this->routeObject->isMatch('/home', 'POST'));
-        $this->assertFalse($this->routeObject->isMatch('/', 'POST'));
-    }
-
     public function testIsRouteMatchRegex()
     {
-        $this->specify("Test integer parameter", function () {
-            $this->routeObject->setPath('/products/{int:id}');
-
-            $this->assertTrue($this->routeObject->isMatch('/products/1', 'GET'));
-            $this->assertFalse($this->routeObject->isMatch('/products/index', 'GET'));
-            $this->assertFalse($this->routeObject->isMatch('/products/1.12', 'GET'));
-        });
-
-        $this->specify("Test string parameter", function () {
-            $this->routeObject->setPath('/products/{string:id}');
+        $this->specify("Test parameter", function () {
+            $routeConfig = $this->routeParser->parse('/products/{id}');
+            $this->routeObject->setPath($routeConfig['path']);
+            $this->routeObject->setRegexPattern($routeConfig['regexPattern']);
+            $this->routeObject->setParams($routeConfig['params']);
 
             $this->assertTrue($this->routeObject->isMatch('/products/index', 'GET'));
             $this->assertTrue($this->routeObject->isMatch('/products/1', 'GET'));
+            $this->assertTrue($this->routeObject->isMatch('/products/1.1', 'GET'));
             $this->assertFalse($this->routeObject->isMatch('/products', 'GET'));
         });
 
         $this->specify("Test optional parameter", function () {
-            $this->routeObject->setPath('/products[/{string:id}]');
+            $routeConfig = $this->routeParser->parse('/products[/{id}]');
+            $this->routeObject->setPath($routeConfig['path']);
+            $this->routeObject->setRegexPattern($routeConfig['regexPattern']);
+            $this->routeObject->setParams($routeConfig['params']);
 
             $this->assertTrue($this->routeObject->isMatch('/products', 'GET'));
             $this->assertTrue($this->routeObject->isMatch('/products/index', 'GET'));
-            $this->assertFalse($this->routeObject->isMatch('/products/1#!@!!#$"""', 'GET'));
+            $this->assertTrue($this->routeObject->isMatch('/products/1#!@!!#$"""', 'GET'));
         });
     }
 
     public function testSetHandlerException()
     {
-        $this->expectException(\Error::class);
         $this->routeObject->setHandler('Class::method');
-    }
-
-    public function testGetPredefinedRegex()
-    {
+        $this->assertTrue($this->routeObject->getHandler() == 'Class::method');
     }
 }
