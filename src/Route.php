@@ -192,19 +192,17 @@ class Route implements RouteInterface
             return false;
         }
 
-        $matches = [];
-        $pregResult = preg_match($this->regexPattern, $requestString, $matches);
+        $paramMatches = [];
+        $pregResult = preg_match($this->regexPattern, $requestString, $paramMatches);
 
-        if ($pregResult == 1) {
-            $paramsPart = $this->getParamsPart($requestString, $this->path);
-
-            if (!empty($paramsPart)) {
-                $this->requestParams = $this->parseParams($paramsPart, $this->params);
-                if (count($this->requestParams) != count($this->params)) {
+        if ($pregResult === 1) {
+            foreach ($this->params as $params) {
+                $paramName = $params['name'];
+                if (!$params['optional'] && !isset($paramMatches[$paramName])) {
                     return false;
                 }
-            } else {
-                $this->requestParams = [];
+
+                $this->requestParams[$paramName] = $paramMatches[$paramName];
             }
 
             return true;
@@ -226,42 +224,4 @@ class Route implements RouteInterface
         ];
     }
 
-    /**
-     * Splits route base path and route params
-     * @param  string $requestRoute Route string from HTTP Request
-     * @param  string $basePath Route base path
-     * @return string A string contains the parameters part of the route
-     */
-    protected function getParamsPart($requestRoute, $basePath)
-    {
-        $requestRouteLength = strlen($requestRoute);
-        $basePathLength = strlen($basePath);
-
-        return substr($requestRoute, $basePathLength, $requestRouteLength-$basePathLength);
-    }
-
-    /**
-     * Parses request parameters
-     * @param  array $params
-     * @param  array $routeParams
-     * @return array
-     */
-    protected function parseParams($params, $routeParams)
-    {
-        $params = trim($params, '/');
-        $arr_param = explode('/', $params);
-        $result = [];
-
-        if (count($arr_param) != count($routeParams)) {
-            return $result;
-        }
-
-        foreach ($routeParams as $key => $value) {
-            if (isset($arr_param[$key])) {
-                $result[$value['name']] = $arr_param[$key];
-            }
-        }
-
-        return $result;
-    }
 }

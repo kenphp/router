@@ -9,7 +9,8 @@
             "email": "ardi93@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+    },
     "require-dev": {
         "codeception/codeception": "^2.3",
         "codeception/specify": "^0.4.6"

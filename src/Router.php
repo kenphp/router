@@ -29,11 +29,11 @@ class Router implements RouterInterface
         if (isset($config['routeParser'])) {
             if ($config['routeParser'] instanceof RouteParser) {
                 $this->routeParser = $config['routeParser'];
-            } else {
-                throw new InvalidConfigurationException("Expecting an instance of 'Ken\Router\RouteParser' for 'routeParser' configuration.");
             }
-        } else {
-            throw new InvalidConfigurationException("Configuration 'routeParser' is required.");
+        }
+
+        if ($this->routeParser === null) {
+            $this->routeParser = new RouteParser();
         }
 
         $this->routeCollection = new RouteCollection();
@@ -113,7 +113,7 @@ class Router implements RouterInterface
      * @param  string $method       HTTP Request Method
      * @return \Ken\Router\RouteInterface
      */
-    public function handle($requestRoute, $method)
+    public function resolve($requestRoute, $method)
     {
         return $this->routeCollection->findMatchedRoute($requestRoute, $method);
     }

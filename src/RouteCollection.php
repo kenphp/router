@@ -2,8 +2,6 @@
 
 namespace Ken\Router;
 
-use Ken\Router\Exception\InvalidConfigurationException;
-
 /**
  * A class that manages a collection of \Ken|Router\Route objects
  */
@@ -20,9 +18,17 @@ class RouteCollection implements RouteCollectionInterface
      */
     public function add($name, Route $route)
     {
-        if ($this->has($name)) {
-            throw new InvalidConfigurationException("Route name already exist.");
+        $name = trim($name, '/');
+        if ($name == '') {
+            $name = 'root';
         }
+
+        $originalName = $name;
+        $index = 1;
+        while ($this->has($name)) {
+            $name = "{$originalName}-{$index}";
+        }
+        echo $name . '<br>';
 
         $this->_collections[$name] = $route;
     }

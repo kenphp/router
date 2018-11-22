@@ -7,13 +7,13 @@ namespace Ken\Router;
  */
 class RouteParser
 {
-    const ROUTE_PATTERN = '~(?<route>(?:/[a-zA-Z0-9-]+)+)~is';
+    const ROUTE_PATTERN = '~(?<route>(?:/[a-zA-Z0-9-]*)+)~is';
     const OPTIONAL_OPEN_PARAMS_PATTERN = '(?<optional>(?:\\[|\\[/)*)';
     const OPEN_PARAMS_PATTERN = '(?:\\{){1}';
     const NAME_PARAMS_PATTERN = '(?<name>(?:[a-z][a-z]+))';
     const CLOSE_PARAMS_PATTERN = '(?:\\}){1}';
     const OPTIONAL_CLOSE_PARAMS_PATTERN = '(?:\\])*';
-    const DATA_TYPE_PATTERN = '(\w)';
+    const DATA_TYPE_PATTERN = '\w+';
 
     /**
      * @var string
@@ -60,7 +60,7 @@ class RouteParser
 
         $regexMatch = preg_match(self::ROUTE_PATTERN, $routeString, $matchesRoute);
 
-        if ($regexMatch !== false) {
+        if ($regexMatch === 1) {
             $result = [
                 'path' => $matchesRoute['route'],
                 'regexPattern' => $routeString,
@@ -87,14 +87,15 @@ class RouteParser
             foreach ($matchesParams as $key => $arrMatches) {
                 $pattern = $arrMatches[0];
                 $optional = !empty($arrMatches['optional']);
+                $paramName = $arrMatches['name'];
 
                 $parseRouteResult['params'][$key] = [
                     'pattern' => $pattern,
-                    'name' => $arrMatches['name'],
+                    'name' => $paramName,
                     'optional' => $optional,
                 ];
 
-                $replacement = self::DATA_TYPE_PATTERN;
+                $replacement = "(?<$paramName>" . self::DATA_TYPE_PATTERN . ")";
 
                 if ($optional) {
                     $replacement = "((/)*$replacement){0,1}";
@@ -103,7 +104,7 @@ class RouteParser
             }
         }
 
-        $parseRouteResult['regexPattern'] = '~' . $parseRouteResult['regexPattern'] . '~is';
+        $parseRouteResult['regexPattern'] = '~^' . $parseRouteResult['regexPattern'] . '$~is';
 
         return $parseRouteResult;
     }
