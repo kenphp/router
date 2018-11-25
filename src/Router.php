@@ -23,11 +23,23 @@ class Router {
     protected $routeList;
 
     /**
+     * @var callable
+     */
+    protected $notFoundHandler;
+
+    /**
      * @param array $config
      */
     public function __construct($config = []) {
         $this->routeList = [];
         $this->basePath = '';
+        $this->notFoundHandler = null;
+
+        if (isset($config['notFoundHandler'])) {
+            if (is_callable($config['notFoundHandler'])) {
+                $this->setNotFoundHandler($config['notFoundHandler']);
+            }
+        }
     }
     /**
      * Adds route into collection
@@ -168,10 +180,22 @@ class Router {
     }
 
     /**
-     * Finds route object matched with the current request
+     * Sets a handler when a route is not found
+     * @param callable $handler
+     */
+    public function setNotFoundHandler($handler) {
+        $this->notFoundHandler = $handler;
+    }
+
+    /**
+     * Finds route object matched with the current request.
+     * If route not found, it will checks whether **$notFoundHandler**
+     * has a value. If it does, this function will returns an array containing
+     * **$notFoundHandler** in `handler` key.
+     * If **$notFoundHandler** is null, this function will returns `null`
      * @param  string $requestRoute
      * @param  string $method       HTTP Request Method
-     * @return array
+     * @return null|array
      */
     public function resolve($requestRoute, $method)
     {
@@ -199,7 +223,18 @@ class Router {
             }
         }
 
-        return null;
+        if ($this->notFoundHandler) {
+            return [
+                'handler' => $this->notFoundHandler,
+                'params' => [
+                    'route' => $requestRoute,
+                ],
+                'before' => [],
+                'after' => [],
+            ];
+        } else {
+            return null;
+        }
     }
 
 

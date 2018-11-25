@@ -1,6 +1,6 @@
 {
     "name": "kenphp/ken-router",
-    "description": "Simple Router for Ken Framework",
+    "description": "Simple PHP Router",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -10,6 +10,7 @@
         }
     ],
     "require": {
+        "php": ">=5.6"
     },
     "require-dev": {
         "codeception/codeception": "^2.3",
