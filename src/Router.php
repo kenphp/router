@@ -20,6 +20,11 @@ class Router {
     /**
      * @var array
      */
+    protected $baseOptions;
+
+    /**
+     * @var array
+     */
     protected $routeList;
 
     /**
@@ -33,6 +38,7 @@ class Router {
     public function __construct($config = []) {
         $this->routeList = [];
         $this->basePath = '';
+        $this->baseOptions = [];
         $this->notFoundHandler = null;
 
         if (isset($config['notFoundHandler'])) {
@@ -54,7 +60,7 @@ class Router {
         $routeObject = array_merge([
             'pattern' => $this->parseRoute($route),
             'handler' => $handler,
-        ], $options);
+        ], $options, $this->baseOptions);
 
         $arrMethod = explode("|", $method);
 
@@ -172,11 +178,14 @@ class Router {
      */
     public function group($route, $fn, $options = []) {
         $basePath = $this->basePath;
-        $this->basePath = $route;
+        $baseOptions = $this->baseOptions;
+        $this->basePath = $this->basePath . $route;
+        $this->baseOptions = array_merge($options, $this->baseOptions);
 
         call_user_func($fn);
 
         $this->basePath = $basePath;
+        $this->baseOptions = $baseOptions;
     }
 
     /**

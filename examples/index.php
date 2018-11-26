@@ -18,20 +18,37 @@ $router->get('/', function($params = []) {
 // Route group
 $router->group('/users', function() use ($router) {
 
-    // Route with optional parameter
-    $router->get('[/{id}]', function($params = []) {
-        if (isset($params['id'])) {
-            echo 'Show user ID : ' . $params['id'];
-        } else {
-            echo 'Show a list of user';
-        }
+    $router->get('/', function($params = []) {
+        echo 'Show a list of user<br>';
     });
 
     // Route with named parameter
-    $router->get('/{name}', function($params = []) {
-        echo 'Hello ' . $params['name'];
+    $router->group('/{name}', function() use ($router) {
+        $router->get('/', function($params = []) {
+            echo 'Show user : ' . $params['name'] . '<br>';
+        });
+
+        $router->get('/trx[/{id}]', function($params = []) {
+            if (isset($params['id'])) {
+                echo 'Show transaction ID  ' . $params['id'] . ' of user '. $params['name'] .'<br>';
+            } else {
+                echo 'Show all transaction of user '. $params['name'] .'<br>';
+            }
+        });
+
     });
-});
+}, [
+    // before middleware must be executed before handler
+    // It is an array of callable/Closure
+    'before' => [function() {
+        echo 'This is executed before handler<br>';
+    }],
+    // before middleware must be executed after handler
+    // It is an array of callable/Closure
+    'after' => [function() {
+        echo 'This is executed after handler<br>';
+    }],
+]);
 
 // Get route path
 $routePath = $_SERVER['PATH_INFO'] ?? '/';
@@ -44,8 +61,16 @@ $routeObject = $router->resolve($routePath, $requestMethod);
 
 // If $routeObject is not null
 if($routeObject) {
+    foreach ($routeObject['before'] as $before) {
+        call_user_func($before);
+    }
+
     // You can add some custom parameters here, like HttpRequest and HttpResponse object
     call_user_func_array($routeObject['handler'], [$routeObject['params']]);
+
+    foreach ($routeObject['after'] as $after) {
+        call_user_func($after);
+    }
 } else {
     echo "Route '" . $routePath . "' not found.";
 }
