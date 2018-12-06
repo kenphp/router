@@ -1,4 +1,4 @@
-## Ken-Router
+## Router
 A simple PHP Router for web environment and console environment.
 This library is part of KenPHP Project, but can be used independently.
 
@@ -28,7 +28,7 @@ This library is part of KenPHP Project, but can be used independently.
 ## Installation
 The easiest way to install is using Composer
 ```
-$ composer require kenphp/ken-router
+$ composer require kenphp/router
 ```
 
 ## Examples
