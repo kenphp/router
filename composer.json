@@ -1,5 +1,5 @@
 {
-    "name": "kenphp/ken-router",
+    "name": "kenphp/router",
     "description": "Simple PHP Router",
     "type": "library",
     "license": "MIT",
