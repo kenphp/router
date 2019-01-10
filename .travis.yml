@@ -9,4 +9,4 @@ php:
 install:
     - composer install
 
-script: codecept run --vvv
+script: vendor/bin/codecept run --vvv
