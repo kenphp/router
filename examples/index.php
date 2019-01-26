@@ -38,13 +38,9 @@ $router->group('/users', function() use ($router) {
 
     });
 }, [
-    // before middleware must be executed before handler
-    // It is an array of callable/Closure
     'before' => [function() {
         echo 'This is executed before handler<br>';
     }],
-    // before middleware must be executed after handler
-    // It is an array of callable/Closure
     'after' => [function() {
         echo 'This is executed after handler<br>';
     }],
@@ -61,15 +57,19 @@ $routeObject = $router->resolve($routePath, $requestMethod);
 
 // If $routeObject is not null
 if($routeObject) {
-    foreach ($routeObject['before'] as $before) {
-        call_user_func($before);
+    if (isset($routeObject['before'])) {
+        foreach ($routeObject['before'] as $before) {
+            call_user_func($before);
+        }
     }
 
     // You can add some custom parameters here, like HttpRequest and HttpResponse object
     call_user_func_array($routeObject['handler'], [$routeObject['params']]);
 
-    foreach ($routeObject['after'] as $after) {
-        call_user_func($after);
+    if (isset($routeObject['after'])) {
+        foreach ($routeObject['after'] as $after) {
+            call_user_func($after);
+        }
     }
 } else {
     echo "Route '" . $routePath . "' not found.";

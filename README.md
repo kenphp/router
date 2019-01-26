@@ -23,7 +23,7 @@ This library is part of KenPHP Project, but can be used independently.
 - Execute middlewares and handlers. It only returns an array containing matched route handlers, middlewares, and parameters found in the request.
 
 ## Requirements
-- PHP 5.6 or greater
+- PHP 7.0 or greater
 
 ## Installation
 The easiest way to install is using Composer

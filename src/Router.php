@@ -225,8 +225,11 @@ class Router {
                 $result['handler'] = $routeObject['handler'];
                 $result['params'] = $params;
 
-                $result['before'] = isset($routeObject['before']) ? $routeObject['before'] : [];
-                $result['after'] = isset($routeObject['after']) ? $routeObject['after'] : [];
+                foreach ($routeObject as $key => $value) {
+                    if ($key != 'handler' && $key != 'pattern') {
+                        $result[$key] = $value;
+                    }
+                }
 
                 return $result;
             }
@@ -238,8 +241,6 @@ class Router {
                 'params' => [
                     'route' => $requestRoute,
                 ],
-                'before' => [],
-                'after' => [],
             ];
         } else {
             return null;
