@@ -33,43 +33,43 @@ $ composer require kenphp/router
 ```
 
 ## Methods
-- `route($method, $route, $handler, $options = []) : void`
+1. `route($method, $route, $handler, $options = []) : void`
 
     Example :
     ```php
     $router->route('GET', '/users', ['UserController', 'listUsers']);
     ```
-- `get($route, $handler, $options = []) : void`
+2. `get($route, $handler, $options = []) : void`
 
     Example :
     ```php
     $router->get('/users/{id}', ['UserController', 'getUser']);
     ```
-- `head($route, $handler, $options = []) : void`
+3. `head($route, $handler, $options = []) : void`
 
     Example :
     ```php
     $router->head('/users', ['UserController', 'listUsers']);
     ```
-- `post($route, $handler, $options = []) : void`
+4. `post($route, $handler, $options = []) : void`
 
     Example :
     ```php
     $router->post('/users', ['UserController', 'createUser']);
     ```
-- `put($route, $handler, $options = []) : void`
+5. `put($route, $handler, $options = []) : void`
 
     Example :
     ```php
     $router->put('/users/{id}', ['UserController', 'updateUser']);
     ```
-- `delete($route, $handler, $options = []) : void`
+6. `delete($route, $handler, $options = []) : void`
 
     Example :
     ```php
     $router->delete('/users/{id}', ['UserController', 'deleteUser']);
     ```
-- `group($route, $fn, $options = []) : void`
+7. `group($route, $fn, $options = []) : void`
 
     Example :
     ```php
@@ -77,7 +77,7 @@ $ composer require kenphp/router
         $router->get('/products/{id}', ['ProductController', 'getProduct']);
     });
     ```
-- `setNotFoundHandler(callable $handler) : void`
+8. `setNotFoundHandler(callable $handler) : void`
 
     Example :
     ```php
@@ -85,12 +85,12 @@ $ composer require kenphp/router
         echo 'Page not found.';
     });
     ```
-- `resolve($requestRoute, $method) : null|array`
+9. `resolve($requestRoute, $method) : null|array`
 
     This function would return an array containing the following keys :
-    1. `handler`
-    2. `params`
-    3. Optional keys. This would be filled with any data from the `$options` parameter.
+    - `handler`
+    - `params`
+    - Optional keys. This would be filled with any data from the `$options` parameter.
 
     Example :
     ```php
@@ -109,6 +109,7 @@ $ composer require kenphp/router
      * ]
      */
 ```
+
 
 ## Examples
 - [Usage example for web application](examples/index.php)
