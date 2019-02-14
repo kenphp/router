@@ -159,17 +159,6 @@ class Router {
     }
 
     /**
-     * Adds console route. It can be used for console application.
-     * @param  string $route
-     * @param  callable $handler
-     * @param  array  $options Route optional parameters
-     * @return void
-     */
-    public function console($route, $handler, $options = []) {
-        $this->route('CONSOLE', $route, $handler, $options);
-    }
-
-    /**
      * Adds grouped route
      * @param  string $route
      * @param  callable $fn

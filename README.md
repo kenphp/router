@@ -1,5 +1,5 @@
 ## Router
-A simple PHP Router for web environment and console environment.
+A simple PHP Router for your web application.
 This library is part of KenPHP Project, but can be used independently.
 
 ## Features
@@ -10,7 +10,6 @@ This library is part of KenPHP Project, but can be used independently.
 - Regex-based route patterns
 - Subrouting
 - Supports web application routing
-- Supports console application routing
 - Before and After route middleware
 - Custom handler when a route is not found
 
@@ -21,6 +20,8 @@ This library is part of KenPHP Project, but can be used independently.
 ## What it doesn't ?
 - Parse route path from $_SERVER or any other means. You must provide the route path and method to `Router::resolve` method.
 - Execute middlewares and handlers. It only returns an array containing matched route handlers, middlewares, and parameters found in the request.
+- **Why isn't this library receives `Psr\Http\Message\RequestInterface` implementation and returns `Psr\Http\Message\ResponseInterface` ?** <br>
+    This library aims to gives as much freedom as possible to the user. Not everyone are using PSR-7 implementation and we want to respect that.
 
 ## Requirements
 - PHP 7.0 or greater
@@ -29,6 +30,84 @@ This library is part of KenPHP Project, but can be used independently.
 The easiest way to install is using Composer
 ```
 $ composer require kenphp/router
+```
+
+## Methods
+- `route($method, $route, $handler, $options = []) : void`
+
+    Example :
+    ```php
+    $router->route('GET', '/users', ['UserController', 'listUsers']);
+    ```
+- `get($route, $handler, $options = []) : void`
+
+    Example :
+    ```php
+    $router->get('/users/{id}', ['UserController', 'getUser']);
+    ```
+- `head($route, $handler, $options = []) : void`
+
+    Example :
+    ```php
+    $router->head('/users', ['UserController', 'listUsers']);
+    ```
+- `post($route, $handler, $options = []) : void`
+
+    Example :
+    ```php
+    $router->post('/users', ['UserController', 'createUser']);
+    ```
+- `put($route, $handler, $options = []) : void`
+
+    Example :
+    ```php
+    $router->put('/users/{id}', ['UserController', 'updateUser']);
+    ```
+- `delete($route, $handler, $options = []) : void`
+
+    Example :
+    ```php
+    $router->delete('/users/{id}', ['UserController', 'deleteUser']);
+    ```
+- `group($route, $fn, $options = []) : void`
+
+    Example :
+    ```php
+    $router->group('/api', function() use ($router) {
+        $router->get('/products/{id}', ['ProductController', 'getProduct']);
+    });
+    ```
+- `setNotFoundHandler(callable $handler) : void`
+
+    Example :
+    ```php
+    $router->setNotFoundHandler(function() {
+        echo 'Page not found.';
+    });
+    ```
+- `resolve($requestRoute, $method) : null|array`
+
+    This function would return an array containing the following keys :
+    1. `handler`
+    2. `params`
+    3. Optional keys. This would be filled with any data from the `$options` parameter.
+
+    Example :
+    ```php
+    $router->get('/users/{id}', ['UserController', 'getUser'], [
+        'namespace' => 'app\controllers'
+    ]);
+
+    $routeArray = $router->resolve('/users/1', 'GET');
+
+    /**
+     * $routeArray would contains
+     * [
+     *    'handler' => ['UserController', 'getUser'],
+     *    'params' => ['id' => 1],
+     *    'namespace' => 'app/controllers',
+     * ]
+     */
 ```
 
 ## Examples
