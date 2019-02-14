@@ -108,8 +108,7 @@ $ composer require kenphp/router
      *    'namespace' => 'app/controllers',
      * ]
      */
-```
-
+    ```
 
 ## Examples
 - [Usage example for web application](examples/index.php)
