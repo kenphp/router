@@ -1,4 +1,4 @@
-## Router
+## Router [![Build Status](https://travis-ci.org/kenphp/router.svg?branch=master)](https://travis-ci.org/kenphp/router)
 A simple PHP Router for your web application.
 This library is part of KenPHP Project, but can be used independently.
 
